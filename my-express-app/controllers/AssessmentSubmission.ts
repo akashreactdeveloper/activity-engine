@@ -14,7 +14,7 @@ export async function submitAssessment(
     req.body;
 
   const parsedAssessmentId = parseInt(assessmentId, 10);
-  const parsedcourseId = parseInt(courseId, 10);
+  const parsedCourseId = parseInt(courseId, 10);
   const parsedStudentId = parseInt(studentId, 10);
   const parsedAttemptId = parseInt(attemptId, 10);
   const parsedQuestionId = parseInt(questionId, 10);
@@ -38,7 +38,7 @@ export async function submitAssessment(
       return;
     }
 
-    console.log(`${LMS_URL}/api/v1/assessment/solutions/${parsedQuestionId}`)
+    console.log(`${LMS_URL}/api/v1/assessment/solutions/${parsedQuestionId}`);
     const response = await axios.get(`${LMS_URL}/api/v1/assessment/solutions/${parsedQuestionId}`, {
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -47,29 +47,52 @@ export async function submitAssessment(
     const externalData = response.data.solution.choice;
     console.log(externalData);
 
-    if(answers === externalData){
+    if (answers === externalData) {
         isCorrect = true;
     }
 
-    const newSubmit = await prisma.submitSession.create({
-      data: {
-        assessmentId: parsedAssessmentId,
-        courseId: parsedcourseId,
+    const existingSubmit = await prisma.submitSession.findFirst({
+      where: {
         studentId: parsedStudentId,
-        attemptId: parsedAttemptId,
-        questionId: parsedQuestionId,
-        answers,
-        isAnswerCorrect: isCorrect, // or true, depending on your logic
+        assessmentId: parsedAssessmentId,
       },
     });
 
+    let newSubmit;
+    if (existingSubmit) {
+      newSubmit = await prisma.submitSession.update({
+        where: {
+          id: existingSubmit.id,
+        },
+        data: {
+          courseId: parsedCourseId,
+          attemptId: parsedAttemptId,
+          questionId: parsedQuestionId,
+          answers,
+          isAnswerCorrect: isCorrect,
+        },
+      });
+    } else {
+      newSubmit = await prisma.submitSession.create({
+        data: {
+          studentId: parsedStudentId,
+          courseId: parsedCourseId,
+          assessmentId: parsedAssessmentId,
+          attemptId: parsedAttemptId,
+          questionId: parsedQuestionId,
+          answers,
+          isAnswerCorrect: isCorrect,
+        },
+      });
+    }
+
     res.json(newSubmit);
   } catch (error) {
-    console.error("Failed to create session:", error);
+    console.error("Failed to submit assessment:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     res
       .status(500)
-      .send({ message: `Error creating session: ${errorMessage}` });
+      .send({ message: `Error submitting assessment: ${errorMessage}` });
   }
 }

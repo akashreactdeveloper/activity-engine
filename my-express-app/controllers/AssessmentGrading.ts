@@ -47,14 +47,6 @@ export async function createAttempt(req: Request, res: Response): Promise<void> 
       attemptId = 1;
     }
 
-    const newAttempt = await prisma.attemptSession.create({
-      data: {
-        assessmentId: parsedAssessmentId,
-        courseInstanceId,
-        studentId: parsedStudentId,
-      },
-    });
-
     res.status(201).json({ message: "Attempt created successfully", attemptId: attemptId });
   } catch (error) {
     console.error("Failed to create session:", error);

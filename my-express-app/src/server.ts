@@ -10,7 +10,10 @@ const PORT = 3000;
 
 // Use CORS middleware first
 app.use(cors({
-    origin: 'http://localhost:4000',
+    origin: [
+        'http://localhost:4000',
+        'http://192.168.176.54:4000'
+    ],
     credentials: true
 }));
 
