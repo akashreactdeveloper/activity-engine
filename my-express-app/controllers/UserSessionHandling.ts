@@ -9,6 +9,7 @@ export async function createSession(
   res: Response
 ): Promise<void> {
   const { user_id, access_token, expires_in } = req.body;
+  console.log(user_id)
   try {
     const newSession = await prisma.loginSession.create({
       data: {

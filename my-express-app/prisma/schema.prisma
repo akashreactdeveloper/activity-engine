@@ -23,4 +23,29 @@ model LoginSession {
   @@index([access_token])
 }
 
+model attemptSession {
+  id          Int    @id @default(autoincrement())
+  assessmentId      Int    @map("assessmentId")
+  courseInstanceId String
+  studentId   Int    // Access token expiration time
+
+  @@index([assessmentId])
+  @@index([studentId])
+}
+
+model submitSession {
+  id             Int      @id @default(autoincrement())
+  studentId      Int
+  courseId       Int
+  assessmentId   Int
+  attemptId      Int
+  questionId     Int
+  answers        String
+  isAnswerCorrect Boolean
+  createdAt      DateTime @default(now())
+
+  @@index([studentId])
+  @@index([assessmentId])
+}
+
 

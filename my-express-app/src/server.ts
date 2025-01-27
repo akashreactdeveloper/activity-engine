@@ -1,13 +1,25 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import AuthRoutes from '../routes/AuthRoute';
+import UserSessionHandling from '../routes/UserSessionHandling';
+import AssessmentGrading from '../routes/AssessmentGrading';
+import cors from 'cors';
 
 const app = express();
 const prisma = new PrismaClient();
 const PORT = 3000;
 
+// Use CORS middleware first
+app.use(cors({
+    origin: 'http://localhost:4000',
+    credentials: true
+}));
+
+// Then, use JSON parser
 app.use(express.json());
-app.use(AuthRoutes);
+
+// After setting up CORS, add your routes
+app.use(UserSessionHandling);
+app.use(AssessmentGrading);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
