@@ -1,7 +1,8 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import UserSessionHandling from '../routes/UserSessionHandling';
-import AssessmentGrading from '../routes/AssessmentGrading';
+import UserSessionHandling from './routes/UserSessionHandling';
+import AssessmentGrading from './routes/AssessmentGrading';
+import ProgressTracking from './routes/ProgressTracking';
 import cors from 'cors';
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 // After setting up CORS, add your routes
 app.use(UserSessionHandling);
 app.use(AssessmentGrading);
+app.use(ProgressTracking);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
