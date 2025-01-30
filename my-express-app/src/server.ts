@@ -13,7 +13,9 @@ const PORT = 3000;
 app.use(cors({
     origin: [
         'http://localhost:4000',
-        'http://192.168.176.54:4000'
+        'http://192.168.1.46:4000',
+        'http://157.20.214.128:8000',
+        'vicharanashala.in'
     ],
     credentials: true
 }));

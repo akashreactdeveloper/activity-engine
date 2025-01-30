@@ -50,42 +50,128 @@ model submitSession {
 
 // Define the Prisma schema model for the progress of courses, modules, and items
 
-model ProgressMap {
-  id               Int      @id @default(autoincrement())
+model StudentCourseProgress {
+  studentId        String
   courseInstanceId String
-  studentIds       String[]
-  modules          Module[]
-  isCompleted      Boolean  @default(false) // Tracks completion of the entire course
+  progress         ProgressEnum
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@id([studentId, courseInstanceId])
 }
 
-model Module {
-  id             Int      @id @default(autoincrement())
-  progressMap    ProgressMap @relation(fields: [progressMapId], references: [id])
-  progressMapId  Int
-  moduleId       String
-  sequence       Int
-  sections       Section[]
-  isCompleted    Boolean  @default(false) // Tracks completion of the module
+model StudentModuleProgress {
+  studentId        String
+  moduleId         String
+  courseInstanceId String
+  progress         ProgressEnum
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@id([studentId, moduleId, courseInstanceId])
 }
 
-model Section {
-  id            Int      @id @default(autoincrement())
-  module        Module   @relation(fields: [moduleId], references: [id])
-  moduleId      Int
-  sectionId     String
-  sequence      Int
-  sectionItems  SectionItem[]
-  isCompleted   Boolean  @default(false) // Tracks completion of the section
+model StudentSectionProgress {
+  studentId        String
+  sectionId        String
+  courseInstanceId String
+  progress         ProgressEnum
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@id([studentId, sectionId, courseInstanceId])
 }
 
-model SectionItem {
-  id            Int     @id @default(autoincrement())
-  section       Section @relation(fields: [sectionId], references: [id])
-  sectionId     Int
-  sectionItemId String
-  sequence      Int
-  isCompleted   Boolean @default(false) // Tracks completion of the section item
+model StudentSectionItemProgress {
+  studentId        String
+  sectionItemId    String
+  courseInstanceId String
+  progress         ProgressEnum
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@id([studentId, sectionItemId, courseInstanceId])
 }
 
+model ModuleNext {
+  moduleId         String   @id
+  sectionId        String // First section of moduleId
+  nextModuleId     String?
+  courseInstanceId String
+  createdAt        DateTime @default(now())
+}
 
+model SectionNext {
+  sectionId     String   @id
+  sectionItemId String // First section item of sectionId
+  nextSectionId String?
+  moduleId      String
+  createdAt     DateTime @default(now())
+}
+
+model SectionItemNext {
+  sectionItemId     String   @id
+  nextSectionItemId String?
+  sectionId         String
+  createdAt         DateTime @default(now())
+}
+
+model StudentAssessmentProgress {
+  id               Int                  @id @default(autoincrement())
+  studentId        String
+  assessmentId     String
+  courseInstanceId String
+  assessmentStatus AssessmentStatusEnum
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@unique([studentId, assessmentId, courseInstanceId])
+}
+
+model StudentAssessmentAttemptSummary {
+  studentId        String   @map("studentId")
+  assessmentId     String   @map("assessmentId")
+  courseInstanceId String   @map("courseInstanceId")
+  latestAttemptId  Int      @map("latestAttemptId")
+  attemptCount     Int      @map("attemptCount")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@id([studentId, assessmentId, courseInstanceId])
+}
+
+enum ProgressEnum {
+  IN_PROGRESS
+  INCOMPLETE
+  COMPLETE
+}
+
+enum ContentTypeEnum {
+  VIDEO
+  ARTICLE
+  ASSESSMENT
+}
+
+enum ViolationTypeEnum {
+  MULTIPLE_PEOPLE_DETECTED
+  BLURRY_IMAGE
+  SPEAKING_DETECTED
+  INACTIVE_USER
+  INVALID_FACE_DETECTED
+  OUT_OF_FRAME
+  NOT_FOCUSED
+}
+
+enum AssessmentStatusEnum {
+  PENDING
+  GRADED
+  FAILED
+  PASSED
+}
+
+enum AssessmentAttemptStatusEnum {
+  IN_PROGRESS
+  SUCCESS
+  FAILED
+}
 
