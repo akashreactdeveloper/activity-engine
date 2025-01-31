@@ -1,4 +1,3 @@
-Here's your guide formatted as a GitHub-flavored Markdown document. You can copy and paste this directly into your GitHub repository README file:
 
 ```markdown
 # Deployment Guide for CAL Activity Engine
@@ -92,7 +91,7 @@ gcloud app deploy --no-cache
 
 ### Step 8: Verification Post-Deployment
 After successful deployment, you can access your application at:
-[https://cal-activity-engine.el.r.appspot.com](https://cal-activity-engine.el.r.appspot.com/)
+[Your Own Link](https://cal-activity-engine.el.r.appspot.com/)
 
 For logs and troubleshooting, use:
 ```bash
@@ -100,5 +99,3 @@ gcloud app logs tail -s default    # Stream logs from the command line
 gcloud app browse                   # View your application in the web browser
 ```
 ```
-
-This markdown format is suitable for GitHub and will render properly when viewed in the repository.
